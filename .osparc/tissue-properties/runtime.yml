@@ -1,0 +1,14 @@
+restart-policy: no-restart
+settings:
+  - name: ports
+    type: int
+    value: 8080
+  - name: Resources
+    type: Resources
+    value:
+      Limits:
+        NanoCPUs: 500000000  # 0.5 CPU (1 CPU = 1e9 nano-CPUs)
+        MemoryBytes: 134217728  # 128 MiB (128 * 1024 * 1024 bytes)
+paths-mapping:
+  inputs_path: /var/inputs
+  outputs_path: /var/outputs
