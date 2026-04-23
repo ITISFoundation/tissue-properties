@@ -1,0 +1,19 @@
+# Local validation of the production image.
+#
+# Mirrors how the dynamic-sidecar will run the container in oSPARC:
+#   - mounts ./validation/outputs as the sidecar outputs directory,
+#   - injects DY_SIDECAR_PATH_OUTPUTS,
+#   - publishes :8080 on the host.
+#
+# The image must already be built — run `make build` first.
+
+services:
+  tissue-properties:
+    image: simcore/services/dynamic/tissue-properties:${DOCKER_IMAGE_TAG:-1.0.2}
+    ports:
+      - "8080:8080"
+    environment:
+      DY_SIDECAR_PATH_OUTPUTS: /var/outputs
+      SERVER_LOG_LEVEL: ${SERVER_LOG_LEVEL:-info}
+    volumes:
+      - ./validation/outputs:/var/outputs

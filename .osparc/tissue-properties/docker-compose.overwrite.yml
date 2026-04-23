@@ -2,3 +2,4 @@ services:
   tissue-properties:
     build:
       dockerfile: Dockerfile
+      target: production
