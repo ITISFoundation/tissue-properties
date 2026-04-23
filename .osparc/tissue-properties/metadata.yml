@@ -17,12 +17,12 @@ version_display: "3.0"
 integration-version: 2.0.0
 type: dynamic
 authors:
-  - name: odeimaiz
-    email: maiz@itis.swiss
-    affiliation: IT'IS Foundation
-  - name: neagu
-    email: neagu@itis.swiss
-    affiliation: IT'IS Foundation
+- name: odeimaiz
+  email: maiz@itis.swiss
+  affiliation: IT'IS Foundation
+- name: neagu
+  email: neagu@itis.swiss
+  affiliation: IT'IS Foundation
 contact: neagu@itis.swiss
 inputs: {}
 outputs:
