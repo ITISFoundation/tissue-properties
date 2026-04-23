@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>IT'IS Tissue Properties</title>
+    <meta name="author" content="IT'IS Foundation">
+    <meta content="ITIS Foundation tissue properties database — searchable HTML table." />
+
+    <link href="csv-to-html-table/css/bootstrap.min.css" rel="stylesheet">
+    <link href="csv-to-html-table/css/dataTables.bootstrap.css" rel="stylesheet">
+    <link href="csv-to-html-table/css/oSPARC.dark.css" rel="stylesheet">
+  </head>
+
+  <body>
+    <div class="container-fluid">
+      <div id='table-container'></div>
+    </div>
+
+    <footer class='footer'>
+      <div class='container-fluid'>
+        <hr />
+        <p class='pull-right'>
+          Powered by
+          <a href='https://github.com/derekeder/csv-to-html-table'>csv-to-html-table</a>
+          by <a href='http://derekeder.com'>Derek Eder</a>.
+        </p>
+      </div>
+    </footer>
+
+    <script type="text/javascript" src="csv-to-html-table/js/jquery.min.js"></script>
+    <script type="text/javascript" src="csv-to-html-table/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="csv-to-html-table/js/jquery.csv.min.js"></script>
+    <script type="text/javascript" src="csv-to-html-table/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript" src="csv-to-html-table/js/dataTables.bootstrap.js"></script>
+    <script type="text/javascript" src="csv-to-html-table/js/csv_to_html_table.js"></script>
+
+    <script type="text/javascript">
+      CsvToHtmlTable.init({
+        csv_path: 'csv-to-html-table/data/TissueProperties.csv',
+        element: 'table-container',
+        csv_options: {separator: ';', delimiter: '"'},
+        datatables_options: {"paging": false},
+      });
+    </script>
+  </body>
+</html>

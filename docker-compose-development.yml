@@ -12,10 +12,9 @@ services:
       HOST: 0.0.0.0
       PORT: 8080
       DY_SIDECAR_PATH_OUTPUTS: /var/outputs
-      TISSUE_PROPERTIES_CSV: /app/csv-to-html-table/data/TissueProperties.csv
+      TISSUE_PROPERTIES_CSV: /app/src/csv-to-html-table/data/TissueProperties.csv
       SIMCORE_NODE_BASEPATH: ${SIMCORE_NODE_BASEPATH:-}
     volumes:
-      - ./csv-to-html-table:/app/csv-to-html-table
-      - ./index.html:/app/index.html
+      - ./src:/app/src
       - ./vite.config.js:/app/vite.config.js
       - ./validation/outputs:/var/outputs

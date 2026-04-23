@@ -10,7 +10,7 @@ const base = process.env.SIMCORE_NODE_BASEPATH
   : '/';
 
 export default defineConfig({
-  root: '.',
+  root: 'src',
   base,
   publicDir: false,
   server: {

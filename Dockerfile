@@ -9,8 +9,7 @@ FROM alpine:3.20@sha256:d9e853e87e55526f6b2917df91a2115c36dd7c696a35be12163d44e6
 
 WORKDIR /site
 
-COPY index.html /site/index.html
-COPY csv-to-html-table /site/csv-to-html-table
+COPY src/ /site/
 
 # =============================================================================
 # Stage: production
@@ -73,8 +72,8 @@ ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/tissue-properties-entrypoint.sh"
 
 # =============================================================================
 # Stage: development
-# Vite dev server with hot module reload. Bind-mount csv-to-html-table/ from
-# the host (see docker-compose-local.yml) to edit and see changes live.
+# Vite dev server with hot module reload. Bind-mount src/ from
+# the host (see docker-compose-development.yml) to edit and see changes live.
 # =============================================================================
 FROM node:20-alpine@sha256:fb4cd12c85ee03686f6af5362a0b0d56d50c58a04632e6c0fb8363f609372293 AS development
 
@@ -88,14 +87,13 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 RUN npm ci --no-audit --no-fund
 
-COPY index.html ./index.html
-COPY csv-to-html-table ./csv-to-html-table
+COPY src/ ./src/
 COPY vite.config.js ./vite.config.js
 
 ENV HOST=0.0.0.0 \
     PORT=8080 \
     DY_SIDECAR_PATH_OUTPUTS=/var/outputs \
-    TISSUE_PROPERTIES_CSV=/app/csv-to-html-table/data/TissueProperties.csv
+    TISSUE_PROPERTIES_CSV=/app/src/csv-to-html-table/data/TissueProperties.csv
 
 EXPOSE 8080
 
