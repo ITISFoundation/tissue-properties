@@ -1,0 +1,14 @@
+# Keep the build context lean
+.git
+.github
+.vscode
+node_modules
+validation
+commans_output.ignore.txt
+*.ignore.*
+docker-compose-local.yml
+docker-compose.yml
+README.md
+LICENSE
+.bumpversion.cfg
+Makefile

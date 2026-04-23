@@ -1,0 +1,12 @@
+# `ooil compose` writes this file at build time; don't commit the artifact.
+docker-compose.yml
+
+# Local Node dev tooling
+node_modules/
+.env
+.env.local
+
+# Local scratch files
+*.ignore.*
+
+validation/
