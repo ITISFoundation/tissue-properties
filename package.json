@@ -1,0 +1,13 @@
+{
+  "name": "tissue-properties",
+  "version": "1.0.2",
+  "private": true,
+  "description": "ITIS Foundation tissue properties database viewer for o²S²PARC",
+  "type": "module",
+  "scripts": {
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "vite": "5.4.10"
+  }
+}
