@@ -21,5 +21,4 @@ dest_file="${dest_dir}/TissueProperties.csv"
 
 mkdir -p "${dest_dir}"
 cp -f "${TISSUE_PROPERTIES_CSV}" "${dest_file}"
-
 echo "[copy_outputs] published ${dest_file}"

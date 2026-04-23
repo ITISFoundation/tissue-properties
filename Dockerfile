@@ -33,6 +33,7 @@ RUN apk add --no-cache \
         bash=5.2.37-r0 \
         coreutils=9.7-r1 \
         curl=8.14.1-r2 \
+        su-exec=0.2-r3 \
         tini=0.19.0-r3
 
 # Static site assets
@@ -67,7 +68,11 @@ EXPOSE 8080
 HEALTHCHECK --interval=10s --timeout=5s --start-period=5s --retries=3 \
     CMD ["/usr/local/bin/docker_healthcheck.bash"]
 
-USER sws
+# NOTE: entrypoint must run as root so it can reconcile ownership/group
+# membership against the host-owned ${DY_SIDECAR_PATH_OUTPUTS} bind mount
+# (UID/GID are unknown at build time). It then drops to `sws` via su-exec
+# before launching static-web-server.
+USER root
 ENTRYPOINT ["/sbin/tini", "--", "/usr/local/bin/tissue-properties-entrypoint.sh"]
 
 # =============================================================================
