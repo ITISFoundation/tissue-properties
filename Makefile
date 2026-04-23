@@ -29,12 +29,12 @@ build-devel: ## build the development image (Vite + HMR)
 		-t $(DOCKER_REGISTRY)/$(DOCKER_IMAGE_NAME):$(DOCKER_IMAGE_TAG)-devel \
 		.
 
-.PHONY: run-local
-run-local: ## run the production image (validates as it would in oSPARC)
+.PHONY: run
+run: build ## build & run the production image (validates as it would in oSPARC)
 	docker compose --file docker-compose-local.yml up
 
 .PHONY: run-devel
-run-devel: ## run the development image with hot-reload bind-mounts
+run-devel: build-devel ## build & run the development image with hot-reload bind-mounts
 	docker compose --file docker-compose-development.yml up
 
 .PHONY: down
