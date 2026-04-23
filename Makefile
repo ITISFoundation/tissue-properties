@@ -11,6 +11,16 @@ export DOCKER_REGISTRY   ?= itisfoundation
 OOIL_IMAGE := itisfoundation/ci-service-integration-library:v2.2.4
 
 
+.PHONY: help
+help: ## list targets
+	@echo "Recipes for '$(notdir $(CURDIR))' (version $(DOCKER_IMAGE_TAG)):"
+	@echo ""
+	@awk 'BEGIN {FS = ":.*?## "} \
+		/^[[:alpha:][:space:]_-]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' \
+		$(MAKEFILE_LIST)
+	@echo ""
+
+
 .PHONY: compose-spec
 compose-spec: ## generates docker-compose.yml from .osparc/ via ooil
 	@docker run -it --rm -v $(PWD):/$(DOCKER_IMAGE_NAME) \
@@ -42,6 +52,7 @@ down: ## stop the local stack (works for both prod and dev)
 	-docker compose --file docker-compose-local.yml down
 	-docker compose --file docker-compose-development.yml down
 
+
 .PHONY: publish-local
 publish-local: ## tag + push to the local throw-away registry (requires `make build`)
 	docker tag \
@@ -67,11 +78,54 @@ version-patch version-minor version-major: .bumpversion.cfg ## bump service vers
 	$(call _bumpversion,$<,version-)
 	@$(MAKE) compose-spec
 
-.PHONY: help
-help: ## list targets
-	@echo "Recipes for '$(notdir $(CURDIR))' (version $(DOCKER_IMAGE_TAG)):"
-	@echo ""
-	@awk 'BEGIN {FS = ":.*?## "} \
-		/^[[:alpha:][:space:]_-]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' \
-		$(MAKEFILE_LIST)
-	@echo ""
+
+# ============================================================================
+# Tissue properties data pipeline
+# ----------------------------------------------------------------------------
+
+DB_TOOLS_IMAGE := tissue-properties/db-tools:local
+# data-source/ is expected to contain exactly ONE .db file. The targets
+# below enforce that and pick it up automatically. To use a different
+# file, replace the one in data-source/ or pass DB=path/to/file.db.
+DB             ?= $(firstword $(wildcard data-source/*.db))
+OUT_CSV        ?= src/csv-to-html-table/data/TissueProperties.csv
+VERSION        ?=
+
+# Bail out unless data-source/ contains exactly one .db file (or DB=...
+# was passed explicitly on the command line).
+_db_count       = $(words $(wildcard data-source/*.db))
+define _check_db
+@if [ "$(origin DB)" = "file" ] && [ $(_db_count) -ne 1 ]; then \
+	echo "ERROR: data-source/ must contain exactly one .db file (found $(_db_count))."; \
+	echo "       Either keep a single .db in data-source/ or pass DB=path/to/file.db."; \
+	exit 1; \
+fi
+@test -n "$(DB)" || { echo "ERROR: no .db file found. Drop one in data-source/ or pass DB=path/to/file.db"; exit 1; }
+@test -f "$(DB)" || { echo "ERROR: DB file not found: $(DB)"; exit 1; }
+endef
+
+# Internal: helper image used by tissues-list-versions / tissues-update-csv.
+# Built on first use and cached by docker; not surfaced in `make help`.
+.PHONY: tissues-build-tools
+tissues-build-tools: scripts/Dockerfile scripts/db_to_csv.py
+	docker build -t $(DB_TOOLS_IMAGE) scripts/
+
+# Run the helper image. $(1) is the CLI command + args appended to the entrypoint.
+define _db_tools_run
+docker run --rm \
+	-v "$(PWD)":/work -w /work \
+	-u $(shell id -u):$(shell id -g) \
+	$(DB_TOOLS_IMAGE) $(1)
+endef
+
+.PHONY: tissues-list-versions
+tissues-list-versions: tissues-build-tools ## list IT'IS versions in $(DB) and their tissue counts
+	$(_check_db)
+	@echo "[tissues-list-versions] DB: $(DB)"
+	@$(call _db_tools_run,list-versions "$(DB)")
+
+.PHONY: tissues-update-csv
+tissues-update-csv: tissues-build-tools ## regenerate $(OUT_CSV) from $(DB) (set VERSION=4.0 etc; defaults to the active version)
+	$(_check_db)
+	@echo "[tissues-update-csv] DB: $(DB)"
+	@$(call _db_tools_run,convert "$(DB)" "$(OUT_CSV)" $(if $(VERSION),--version "$(VERSION)"))
