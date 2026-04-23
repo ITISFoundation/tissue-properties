@@ -8,7 +8,7 @@ export DOCKER_IMAGE_NAME ?= tissue-properties
 export DOCKER_IMAGE_TAG  ?= 1.0.2
 export DOCKER_REGISTRY   ?= itisfoundation
 
-OOIL_IMAGE := itisfoundation/ci-service-integration-library:v2.2.24
+OOIL_IMAGE := itisfoundation/ci-service-integration-library:v2.2.4
 
 
 .PHONY: compose-spec
