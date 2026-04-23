@@ -13,6 +13,7 @@ description: >-
   Powered by [csv-to-html-table](https://github.com/derekeder/csv-to-html-table).
 key: simcore/services/dynamic/tissue-properties
 version: 1.0.3
+version_display: "3.0"
 integration-version: 2.0.0
 type: dynamic
 authors:
