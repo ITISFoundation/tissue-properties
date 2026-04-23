@@ -5,6 +5,22 @@ An o²S²PARC dynamic service that displays the IT'IS Foundation
 searchable HTML table and publishes the underlying CSV as `output_1` for
 downstream pipeline nodes.
 
+## Update the tissue-properties dataset
+
+When a new IT'IS Material Database release comes out, drop the new
+`*.db` file into [data-source/](data-source/) and run:
+
+```bash
+make tissues-list-versions                 # see the versions in the DB
+make tissues-update-csv VERSION=<version>  # regenerate the CSV + bump version_display
+```
+
+This rewrites `src/csv-to-html-table/data/TissueProperties.csv`, updates
+the `version_display` field in `.osparc/tissue-properties/metadata.yml`.
+
+See [data-source/README.md](data-source/README.md) for the full procedure,
+required/optional variables.
+
 ## Develop
 
 Edit the viewer in `src/` and run the dev image with hot-reload:
@@ -41,22 +57,6 @@ make publish-local # tags + pushes it to registry:5000
 
 Then open the oSPARC web UI, refresh the service catalog, and add
 `tissue-properties` to a study to test it end-to-end.
-
-## Update the tissue-properties dataset
-
-When a new IT'IS Material Database release comes out, drop the new
-`*.db` file into [data-source/](data-source/) and run:
-
-```bash
-make tissues-list-versions                 # see the versions in the DB
-make tissues-update-csv VERSION=<version>  # regenerate the CSV + bump version_display
-```
-
-This rewrites `src/csv-to-html-table/data/TissueProperties.csv`, updates
-the `version_display` field in `.osparc/tissue-properties/metadata.yml`.
-
-See [data-source/README.md](data-source/README.md) for the full procedure,
-required/optional variables.
 
 ## All other targets
 
