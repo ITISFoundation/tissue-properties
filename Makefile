@@ -107,7 +107,7 @@ endef
 # Internal: helper image used by tissues-list-versions / tissues-update-csv.
 # Built on first use and cached by docker; not surfaced in `make help`.
 .PHONY: tissues-build-tools
-tissues-build-tools: scripts/Dockerfile scripts/db_to_csv.py
+tissues-build-tools: scripts/Dockerfile scripts/tissues_db.py
 	docker build -t $(DB_TOOLS_IMAGE) scripts/
 
 # Run the helper image. $(1) is the CLI command + args appended to the entrypoint.
