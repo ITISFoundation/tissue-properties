@@ -124,8 +124,18 @@ tissues-list-versions: tissues-build-tools ## list IT'IS versions in $(DB) and t
 	@echo "[tissues-list-versions] DB: $(DB)"
 	@$(call _db_tools_run,list-versions "$(DB)")
 
+DISPLAY_BUMPCFG := .bumpversion-display.cfg
+
 .PHONY: tissues-update-csv
 tissues-update-csv: tissues-build-tools ## regenerate $(OUT_CSV) from $(DB) (set VERSION=4.0 etc; defaults to the active version)
 	$(_check_db)
 	@echo "[tissues-update-csv] DB: $(DB)"
 	@$(call _db_tools_run,convert "$(DB)" "$(OUT_CSV)" $(if $(VERSION),--version "$(VERSION)"))
+	@if [ -n "$(VERSION)" ]; then \
+		echo "[tissues-update-csv] bumping version_display to $(VERSION) via $(DISPLAY_BUMPCFG)"; \
+		docker run --rm -v $(PWD):/$(DOCKER_IMAGE_NAME) \
+			-u $(shell id -u):$(shell id -g) \
+			$(OOIL_IMAGE) \
+			sh -c "cd /$(DOCKER_IMAGE_NAME) && bump2version --verbose --list --allow-dirty --config-file $(DISPLAY_BUMPCFG) --new-version $(VERSION) display"; \
+		$(MAKE) compose-spec; \
+	fi
