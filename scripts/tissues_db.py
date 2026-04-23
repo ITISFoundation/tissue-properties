@@ -19,6 +19,7 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 import typer
+from ruamel.yaml import YAML
 
 app = typer.Typer(add_completion=False, no_args_is_help=True, help=__doc__)
 
@@ -122,6 +123,33 @@ def list_versions(
         typer.echo(f"  {string:<14} {n:>9}     {marker}")
 
 
+# Hardcoded path (relative to the working dir, which is the repo root
+# when invoked via `make tissues-update-csv`).
+METADATA_YML = Path(".osparc/tissue-properties/metadata.yml")
+
+
+def _update_metadata_version_display(version: str) -> None:
+    """Overwrite the `version_display` field in the oSPARC metadata.yml.
+
+    Uses ruamel.yaml in round-trip mode so comments, key order and the
+    folded `description` block are preserved.
+    """
+    if not METADATA_YML.is_file():
+        raise typer.BadParameter(f"metadata file not found: {METADATA_YML}")
+    yaml = YAML()
+    yaml.preserve_quotes = True
+    with METADATA_YML.open("r", encoding="utf-8") as f:
+        data = yaml.load(f)
+    if data is None or "version_display" not in data:
+        raise typer.BadParameter(
+            f"{METADATA_YML} has no `version_display` key to update"
+        )
+    data["version_display"] = version
+    with METADATA_YML.open("w", encoding="utf-8") as f:
+        yaml.dump(data, f)
+    typer.echo(f"[tissues-db] set version_display={version!r} in {METADATA_YML}", err=True)
+
+
 @app.command("convert")
 def convert(
     db: Path = typer.Argument(..., exists=True, dir_okay=False, readable=True, help="path to the IT'IS Material Database .db file"),
@@ -192,6 +220,8 @@ def convert(
     # 10 significant digits.
     df.to_csv(out, sep=";", decimal=",", index=False, float_format="%.10g")
     typer.echo(f"[tissues-db] wrote {out}", err=True)
+
+    _update_metadata_version_display(ver_string)
 
 
 if __name__ == "__main__":
