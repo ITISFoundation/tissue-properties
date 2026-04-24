@@ -5,7 +5,7 @@
 
 services:
   tissue-properties:
-    image: itisfoundation/tissue-properties:1.0.9-devel
+    image: itisfoundation/tissue-properties:1.0.10-devel
     ports:
       - "8080:8080"
     environment:
