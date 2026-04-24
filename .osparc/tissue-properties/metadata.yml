@@ -12,7 +12,7 @@ description: >-
   DOI: 10.13099/VIP21000-04-0. [itis.swiss/database](https://itis.swiss/database).
   Powered by [csv-to-html-table](https://github.com/derekeder/csv-to-html-table).
 key: simcore/services/dynamic/tissue-properties
-version: 1.0.4
+version: 1.0.5
 version_display: "4.0"
 integration-version: 2.0.0
 type: dynamic
